@@ -9,6 +9,8 @@
 if (!defined('ABSPATH')) exit;
 
 function mygb_register_blocks() {
+
+
     // Auto-register all blocks in /blocks/*
     $blocks = glob(__DIR__ . '/blocks/*', GLOB_ONLYDIR);
     foreach ($blocks as $block) {
