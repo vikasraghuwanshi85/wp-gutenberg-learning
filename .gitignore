@@ -1,0 +1,5 @@
+/plugins/my-gutenberg-blocks/node_modules/
+/plugins/my-gutenberg-blocks/build/
+/plugins/my-gutenberg-blocks/vendor/
+/plugins/my-gutenberg-blocks/wp_data/
+/plugins/my-gutenberg-blocks/db_data/

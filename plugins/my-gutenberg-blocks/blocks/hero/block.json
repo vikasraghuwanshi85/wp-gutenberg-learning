@@ -1,0 +1,25 @@
+{
+  "apiVersion": 3,
+  "name": "mygb/hero",
+  "title": "Hero Block",
+  "category": "design",
+  "icon": "cover-image",
+  "description": "A simple hero for Gutenberg learning",
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Learn Gutenberg Like a Pro"
+    },
+    "content": {
+      "type": "string",
+      "default": "This block is built with block.json"
+    },
+    "bgColor": {
+      "type": "string",
+      "default": "#1a1a2e"
+    }
+  },
+  "editorScript": "file:../../build/hero.js",
+  "editorStyle": "file:../../build/editor.css",
+  "style": "file:../../build/style.css"
+}

@@ -1,0 +1,20 @@
+{
+  "apiVersion": 3,
+  "name": "mygb/stats",
+  "title": "Stats Block",
+  "category": "widgets",
+  "icon": "chart-bar",
+  "description": "Dynamic stats block - teaches render.php",
+  "attributes": {
+    "number": {
+      "type": "number",
+      "default": 100
+    },
+    "label": {
+      "type": "string",
+      "default": "Blocks Built"
+    }
+  },
+  "editorScript": "file:../../build/stats.js",
+  "render": "file:./render.php"
+}
