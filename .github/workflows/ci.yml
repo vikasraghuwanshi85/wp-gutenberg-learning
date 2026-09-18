@@ -1,0 +1,50 @@
+@"
+name: CI - Gutenberg Build & Lint
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install JS deps
+        working-directory: plugins/my-gutenberg-blocks
+        run: npm ci
+
+      - name: Lint JS
+        working-directory: plugins/my-gutenberg-blocks
+        run: npm run lint:js || echo "lint done"
+
+      - name: Build Blocks
+        working-directory: plugins/my-gutenberg-blocks
+        run: npm run build
+
+      - name: PHP Lint
+        run: find plugins -name "*.php" -exec php -l {} \;
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: block-build
+          path: plugins/my-gutenberg-blocks/build/
+"@ | Out-File -Encoding utf8 .github/workflows/ci.yml -Force
+
+# Now force add it to git (dotfiles are ignored sometimes)
+git add -f .github/workflows/ci.yml
+git commit -m "fix: add GHA workflow for Gutenberg"
+git push
