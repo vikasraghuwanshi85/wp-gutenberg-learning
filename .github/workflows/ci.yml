@@ -22,15 +22,53 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          tools: composer, cs2pr
 
       - name: Install JS deps
         working-directory: plugins/my-gutenberg-blocks
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
+      - name: Lint JS - Check WordPress standards
+        working-directory: plugins/my-gutenberg-blocks
+        run: npx wp-scripts lint-js src --format=checkstyle | cs2pr --graceful-warnings || echo "JS lint warnings found - check annotations"
+
       - name: Build Blocks
         working-directory: plugins/my-gutenberg-blocks
         run: npm run build
 
-      - name: List build
-        run: ls -la plugins/my-gutenberg-blocks/build/
+      - name: Validate block.json files
+        working-directory: plugins/my-gutenberg-blocks
+        run: |
+          echo "Checking block.json validity..."
+          for f in blocks/*/block.json; do echo "Validating $f"; node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK: $f')"; done
+
+      - name: PHP Lint
+        run: |
+          echo "Checking PHP syntax..."
+          find plugins -name "*.php" -exec php -l {} \;
+
+      - name: WordPress Coding Standards (PHPCS)
+        working-directory: plugins/my-gutenberg-blocks
+        run: |
+          composer global require squizlabs/php_codesniffer --dev || true
+          composer global require wp-coding-standards/wpcs --dev || true
+          export PATH="$HOME/.composer/vendor/bin:$PATH"
+          phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs || true
+          phpcs -i || true
+          echo "Running PHPCS with WordPress standards..."
+          phpcs --standard=WordPress --extensions=php --warning-severity=0 . || echo "PHPCS found issues - see annotations (learning mode, not failing)"
+
+      - name: Check build output exists
+        run: |
+          ls -la plugins/my-gutenberg-blocks/build/
+          test -f plugins/my-gutenberg-blocks/build/hero.js
+          test -f plugins/my-gutenberg-blocks/build/stats.js
+          echo "✅ Both blocks built successfully!"
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gutenberg-blocks-build
+          path: plugins/my-gutenberg-blocks/build/
+          retention-days: 7
