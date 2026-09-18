@@ -5,7 +5,7 @@ export default function Edit({ attributes, setAttributes }) {
     const { title, content, bgColor } = attributes;
     return (
         <>
-            <InspectorControls>
+            <InspectorCont rols>
                 <PanelBody title="Settings">
                     <p>Background</p>
                     <ColorPicker color={bgColor} onChange={(c) => setAttributes({ bgColor: c })} />
